@@ -2,43 +2,30 @@ import { useEffect } from 'react';
 import './App.css';
 import { useQuery, gql } from '@apollo/client';
 
-type Company = {
-  ceo: string;
-};
 
-type Roadster = {
-  apoapsis_au: number;
-};
 
-type Landpad = {
-  wikipedia: string;
-  status: string;
+type Allcustomers = {
+  industry: string;
   id: string;
-  full_name: string;
+  name: string;
+  __typename: string;
 };
 
 // Define a type for the overall data structure
 type QueryData = {
-  company: Company;
-  roadster: Roadster;
-  landpads: Landpad[];
+ 
+  allcustomers: Allcustomers[];
 };
 
 const GET_DATA = gql`
-query ExampleQuery {
-  company {
-    ceo
-  }
-  roadster {
-    apoapsis_au
-  }
-  landpads {
-    wikipedia
-    status
-    id
-    full_name
-  }
-}
+query{
+  allcustomers{
+     industry
+     id
+     name
+     __typename
+   }
+ }
 `
 
 
@@ -50,12 +37,14 @@ function DisplayLocations() {
 
   return (
     <div>
-      {data && data.landpads.map((landpad) => (
-        <div key={landpad.id}>
-          <p>{landpad.full_name} - Status: {landpad.status}</p>
-        
-          <a href={landpad.wikipedia}>Wikipedia</a>
-          <p>{data?.company.ceo}</p>
+      
+      {data && data.allcustomers.map((allcustomer) => (
+        <div key={allcustomer.id}>
+          <p>Industry: {allcustomer.industry} - Status: {allcustomer.id}</p>
+
+          <a >Name:- {allcustomer.name} </a>
+          {/* <a href={allcustomer.name}>Name</a> */}
+          {/* <p>{data?.allcustomer.ceo}</p> */}
         </div>
       ))}
       

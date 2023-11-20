@@ -10,7 +10,7 @@ const root = ReactDOM.createRoot(
 
 
 let client = new ApolloClient({
-  uri: 'https://spacex-production.up.railway.app/.',
+  uri: 'http://127.0.0.1:8000/graphql/',
   cache: new InMemoryCache(),
 });
 // const client = ...
