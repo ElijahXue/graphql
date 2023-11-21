@@ -15,26 +15,6 @@ let client = new ApolloClient({
 });
 // const client = ...
 
-// const client = ...
-
-// client
-//   .query({
-//     query: gql`
-//     query ExampleQuery {
-//       company {
-//         ceo
-//       }
-//       roadster {
-//         apoapsis_au
-//       }
-//       landpads {
-//         wikipedia
-//         status
-//       }
-//     }
-//     `,
-//   })
-//   .then((result) => console.log(result));
 
   root.render(
     <React.StrictMode>
