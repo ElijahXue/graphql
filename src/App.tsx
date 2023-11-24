@@ -2,26 +2,35 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import { factory } from "typescript";
-
-type Allcustomers = {
+import { AddOrder } from "./components/AddOrder";
+export type Order = {
+  id: string;
+  description: string;
+  totalInCents: number;
+};
+export type Customers = {
   industry: string;
   id: string;
   name: string;
-  __typename: string;
+  orders: Order[];
 };
 
 // Define a type for the overall data structure
 type QueryData = {
-  allcustomers: Allcustomers[];
+  customers: Customers[];
 };
 
 const GET_DATA = gql`
   query {
-    allcustomers {
-      industry
+    customers {
       id
       name
-      __typename
+      industry
+      orders {
+        id
+        description
+        totalInCents
+      }
     }
   }
 `;
@@ -29,21 +38,40 @@ const GET_DATA = gql`
 function DisplayLocations() {
   const { loading, error, data } = useQuery<QueryData>(GET_DATA);
 
+  // useEffect(() => {
+  //   console.log("data", data?.customers);
+  // }, [data]);
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
 
   return (
     <div>
       {data &&
-        data.allcustomers.map((allcustomer) => (
-          <div key={allcustomer.id}>
-            <p>
-              Industry: {allcustomer.industry} - Status: {allcustomer.id}
-            </p>
-
-            <a>Name:- {allcustomer.name} </a>
-            {/* <a href={allcustomer.name}>Name</a> */}
-            {/* <p>{data?.allcustomer.ceo}</p> */}
+        data.customers.map((customer: Customers) => (
+          <div key={customer.id}>
+            <h2>
+              Industry: {customer.industry} - Status: {customer.id}
+              <a>Name:- {customer.name} </a>
+            </h2>
+            {/* Display orders for each customer */}
+            <div>
+              {customer.orders.map((order: Order) => {
+                return (
+                  <div key={order.id}>
+                    <p>
+                      Order ID: {order.id}, Description: {order.description},
+                      Total Cost: $
+                      {(order.totalInCents / 100).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </p>
+                  </div>
+                );
+              })}
+              <AddOrder customerID={customer.id} />
+            </div>
           </div>
         ))}
     </div>
@@ -79,22 +107,22 @@ function App() {
       GET_DATA, // DocumentNode object parsed with gql
     ],
   });
-  useEffect(() => {
-    console.log({ loading, error, data });
-    console.log({
-      createCustoerLoading,
-      createCustoerError,
-      createCustoerData,
-    });
-  });
+  // useEffect(() => {
+  //   console.log({ loading, error, data });
+  //   console.log({
+  //     createCustoerLoading,
+  //     createCustoerError,
+  //     createCustoerData,
+  //   });
+  // });
 
   return (
     <div className="App">
-      <h2>My first Apollo app 🚀</h2>
+      <h1>Custormers </h1>
 
       <br />
       <DisplayLocations />
-
+      <h3> Add a Customer: </h3>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -108,7 +136,7 @@ function App() {
         }}
       >
         <div>
-          <label htmlFor="name">Name:</label>
+          <label htmlFor="name">Name: </label>
           <input
             id="name"
             type="text"
@@ -119,7 +147,7 @@ function App() {
           />
         </div>
         <div>
-          <label htmlFor="industry">Industry:</label>
+          <label htmlFor="industry">Industry: </label>
           <input
             id="industry"
             type="text"
